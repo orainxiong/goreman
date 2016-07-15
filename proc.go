@@ -7,6 +7,7 @@ import (
 	"sync"
 	"syscall"
 	"time"
+	"fmt"
 )
 
 var wg sync.WaitGroup
@@ -55,10 +56,12 @@ func startProc(proc string) error {
 		p.mu.Unlock()
 		return nil
 	}
-
+	fmt.Printf("%#v\n",procs[proc])
 	wg.Add(1)
 	go func() {
+		fmt.Printf("%#v  begin spawnProc\n",procs[proc])
 		spawnProc(proc)
+		fmt.Printf("%#v  end spawnProc\n",procs[proc])
 		wg.Done()
 		p.mu.Unlock()
 	}()

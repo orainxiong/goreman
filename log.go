@@ -2,15 +2,17 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/daviddengcn/go-colortext"
+	"log"
+	"os"
 	"sync"
-	"time"
+	"fmt"
 )
 
 type clogger struct {
-	idx  int
-	proc string
+	idx    int
+	proc   string
+	logger *log.Logger
 }
 
 var colors = []ct.Color{
@@ -28,29 +30,20 @@ var mutex = new(sync.Mutex)
 // write handler of logger.
 func (l *clogger) Write(p []byte) (int, error) {
 	buf := bytes.NewBuffer(p)
-	wrote := 0
 	for {
 		line, err := buf.ReadBytes('\n')
 		if len(line) > 1 {
-			now := time.Now().Format("15:04:05")
-			format := fmt.Sprintf("%%s %%%ds | ", maxProcNameLength)
 			s := string(line)
 
 			mutex.Lock()
 			ct.ChangeColor(colors[l.idx], false, ct.None, false)
-			fmt.Printf(format, now, l.proc)
+			l.logger.Print(s)
 			ct.ResetColor()
-			fmt.Print(s)
 			mutex.Unlock()
-
-			wrote += len(line)
 		}
 		if err != nil {
 			break
 		}
-	}
-	if len(p) > 0 && p[len(p)-1] != '\n' {
-		fmt.Println()
 	}
 	return len(p), nil
 }
@@ -59,7 +52,7 @@ func (l *clogger) Write(p []byte) (int, error) {
 func createLogger(proc string) *clogger {
 	mutex.Lock()
 	defer mutex.Unlock()
-	l := &clogger{ci, proc}
+	l := &clogger{ci, proc, log.New(os.Stdout, fmt.Sprintf("%s: ",proc), log.Ldate|log.Ltime|log.Lshortfile)}
 	ci++
 	if ci >= len(colors) {
 		ci = 0
