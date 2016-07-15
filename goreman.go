@@ -20,6 +20,10 @@ import (
 
 const version = "0.0.6"
 
+const WINDOWS_OS string = "windows"
+
+const MY_ENV = ".env"
+
 func usage() {
 	fmt.Fprint(os.Stderr, `Tasks:
   goreman check                      # Show entries in Procfile
@@ -109,7 +113,7 @@ func readProcfile(cfg *config) error {
 			continue
 		}
 		k, v := strings.TrimSpace(tokens[0]), strings.TrimSpace(tokens[1])
-		if runtime.GOOS == "windows" {
+		if runtime.GOOS == WINDOWS_OS {
 			v = re.ReplaceAllStringFunc(v, func(s string) string {
 				return "%" + s[1:] + "%"
 			})
@@ -170,7 +174,7 @@ func start(cfg *config) error {
 		}
 		procs = tmp
 	}
-	godotenv.Load()
+	godotenv.Load(MY_ENV)
 	go startServer()
 	return startProcs()
 }
