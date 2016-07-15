@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"net/rpc"
+	"log"
 )
 
 type Goreman int
@@ -26,6 +27,7 @@ func (r *Goreman) Stop(proc string, ret *string) (err error) {
 			err = r.(error)
 		}
 	}()
+	log.Println("stop process")
 	return stopProc(proc, false)
 }
 

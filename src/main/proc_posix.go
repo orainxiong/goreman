@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"syscall"
+	"log"
 )
 
 // spawn command that specified as proc.
@@ -15,6 +16,7 @@ func spawnProc(proc string) bool {
 
 	cs := []string{"/bin/sh", "-c", procs[proc].cmdline}
 	cmd := exec.Command(cs[0], cs[1:]...)
+	log.Printf("%#v",cmd.Process)
 	cmd.Stdin = nil
 	cmd.Stdout = logger
 	cmd.Stderr = logger
@@ -27,9 +29,11 @@ func spawnProc(proc string) bool {
 		return true
 	}
 	procs[proc].cmd = cmd
+	log.Printf("%p",cmd)
 	procs[proc].quit = true
 	procs[proc].mu.Unlock()
 	err = cmd.Wait()
+	log.Println("after wait")
 	procs[proc].mu.Lock()
 	procs[proc].cond.Broadcast()
 	procs[proc].waitErr = err
@@ -55,8 +59,10 @@ func terminateProc(proc string) error {
 	if pgid == p.Pid {
 		pid = -1 * pid
 	}
-
 	target, err := os.FindProcess(pid)
+	log.Printf("signal pgid ",pgid)
+	log.Printf("signal pid ",pid)
+	log.Printf("%#v",target)
 	if err != nil {
 		return err
 	}

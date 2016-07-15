@@ -52,7 +52,7 @@ func (l *clogger) Write(p []byte) (int, error) {
 func createLogger(proc string) *clogger {
 	mutex.Lock()
 	defer mutex.Unlock()
-	l := &clogger{ci, proc, log.New(os.Stdout, fmt.Sprintf("%s: ",proc), log.Ldate|log.Ltime|log.Lshortfile)}
+	l := &clogger{ci, proc, log.New(os.Stdout, fmt.Sprintf("%s: ",proc), log.Ldate|log.Ltime)}
 	ci++
 	if ci >= len(colors) {
 		ci = 0

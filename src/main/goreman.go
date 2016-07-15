@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"log"
 
 	"github.com/joho/godotenv"
 	"gopkg.in/yaml.v2"
@@ -181,6 +182,7 @@ func start(cfg *config) error {
 
 func main() {
 	var err error
+	log.SetFlags(log.Ldate|log.Ltime|log.Lshortfile)
 
 	cfg := readConfig()
 
