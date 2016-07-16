@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 	"regexp"
@@ -13,10 +14,10 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"log"
 
 	"github.com/joho/godotenv"
 	"gopkg.in/yaml.v2"
+	"time"
 )
 
 const version = "0.0.6"
@@ -182,7 +183,7 @@ func start(cfg *config) error {
 
 func main() {
 	var err error
-	log.SetFlags(log.Ldate|log.Ltime|log.Lshortfile)
+	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 
 	cfg := readConfig()
 
@@ -230,7 +231,7 @@ func main() {
 	default:
 		usage()
 	}
-
+	time.Sleep(100 * time.Microsecond)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)

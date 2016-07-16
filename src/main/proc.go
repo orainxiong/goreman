@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"log"
 	"os"
 	"os/signal"
 	"sync"
@@ -27,27 +26,18 @@ func stopProc(proc string, quit bool) error {
 	}
 
 	p.quit = quit
-	log.Println("start terminateProc")
 	err := terminateProc(proc)
 	if err != nil {
 		return err
 	}
-	log.Println("end terminateProc")
 	timeout := time.AfterFunc(10*time.Second, func() {
-		log.Println("start time.AfterFunc")
 		p.mu.Lock()
 		defer p.mu.Unlock()
 		if p, ok := procs[proc]; ok && p.cmd != nil {
 			err = p.cmd.Process.Kill()
-			log.Printf("%p",p.cmd)
-			log.Printf("%#v",p.cmd.Process)
-			log.Println("end time.AfterFunc ,",err.Error())
 		}
 	})
-	log.Println("start p.cond.Wait")
 	p.cond.Wait()
-	log.Println("end p.cond.Wait")
-
 	timeout.Stop()
 	return err
 }

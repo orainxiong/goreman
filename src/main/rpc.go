@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net"
 	"net/rpc"
-	"log"
 )
 
 type Goreman int
@@ -27,8 +26,12 @@ func (r *Goreman) Stop(proc string, ret *string) (err error) {
 			err = r.(error)
 		}
 	}()
-	log.Println("stop process")
-	return stopProc(proc, false)
+	if err = stopProc(proc, false); err != nil {
+		*ret = fmt.Sprintf("%s : %s", proc, err.Error())
+	} else {
+		*ret = fmt.Sprintf("%s : stop", proc)
+	}
+	return
 }
 
 // rpc: restart
@@ -85,7 +88,9 @@ func run(cmd, proc string) error {
 	case "start":
 		return client.Call("Goreman.Start", proc, &ret)
 	case "stop":
-		return client.Call("Goreman.Stop", proc, &ret)
+		err := client.Call("Goreman.Stop", proc, &ret)
+		fmt.Print(ret)
+		return err
 	case "restart":
 		return client.Call("Goreman.Restart", proc, &ret)
 	case "list":
