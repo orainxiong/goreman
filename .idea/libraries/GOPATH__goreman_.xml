@@ -22,6 +22,7 @@
       <root url="file:///usr/local/go/src/text" />
       <root url="file:///usr/local/go/src/net" />
       <root url="file:///usr/local/go/src/image" />
+      <root url="file://$PROJECT_DIR$/../etcd/src/github.com" />
       <root url="file:///usr/local/go/src/compress" />
       <root url="file:///usr/local/go/src/io" />
       <root url="file:///usr/local/go/src/testing" />
@@ -41,6 +42,7 @@
       <root url="file:///usr/local/go/src/hash" />
       <root url="file:///usr/local/go/src/regexp" />
       <root url="file:///usr/local/go/src/syscall" />
+      <root url="file://$PROJECT_DIR$/../etcd/src/gopkg.in" />
       <root url="file:///usr/local/go/src/bufio" />
       <root url="file:///usr/local/go/src/internal" />
       <root url="file:///usr/local/go/src/expvar" />

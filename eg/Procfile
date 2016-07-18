@@ -1,1 +1,2 @@
 web4: ./web -a :$PORT
+web5: go run web.go -a :$PORT

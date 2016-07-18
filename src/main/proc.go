@@ -30,15 +30,22 @@ func stopProc(proc string, quit bool) error {
 	if err != nil {
 		return err
 	}
-	timeout := time.AfterFunc(10*time.Second, func() {
-		p.mu.Lock()
-		defer p.mu.Unlock()
-		if p, ok := procs[proc]; ok && p.cmd != nil {
-			err = p.cmd.Process.Kill()
-		}
-	})
-	p.cond.Wait()
-	timeout.Stop()
+
+	var done = make(chan bool, 1)
+
+	go func(done chan bool) {
+		p.cond.Wait()
+		done <- true
+	}(done)
+
+	select {
+	case <-time.After(1 * time.Second):
+		p.cond.Signal()
+		<- done
+		err = errors.New("stop timeout")
+	case <-done:
+		err = nil
+	}
 	return err
 }
 

@@ -23,14 +23,22 @@ func (r *Goreman) Start(proc string, ret *string) (err error) {
 func (r *Goreman) Stop(proc string, ret *string) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = r.(error)
+			switch value := r.(type) {
+			case error:
+				err = r.(error)
+			case string:
+				err = errors.New(value)
+			}
+			return
 		}
 	}()
+
 	if err = stopProc(proc, false); err != nil {
 		*ret = fmt.Sprintf("%s : %s", proc, err.Error())
 	} else {
 		*ret = fmt.Sprintf("%s : stop", proc)
 	}
+
 	return
 }
 
@@ -89,7 +97,7 @@ func run(cmd, proc string) error {
 		return client.Call("Goreman.Start", proc, &ret)
 	case "stop":
 		err := client.Call("Goreman.Stop", proc, &ret)
-		fmt.Print(ret)
+		fmt.Println(ret)
 		return err
 	case "restart":
 		return client.Call("Goreman.Restart", proc, &ret)
